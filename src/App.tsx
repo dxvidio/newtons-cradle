@@ -1,4 +1,5 @@
-import NewtonsCradle from './NewtonsCradle';
+import NewtonsCradle from './NewtonsCradle.tsx';
+import React from 'react';
 
 function App() {
   return (
