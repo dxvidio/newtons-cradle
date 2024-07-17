@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { Stage, Container, Graphics } from '@pixi/react';
 import Matter from 'matter-js';
+import * as PIXI from 'pixi.js';
 
 const NewtonsCradle = () => {
-  const engineRef = useRef(null);
-  const circleRef = useRef(null);
-  const graphicsRef = useRef(null);
+  const engineRef = useRef<Matter.Engine | null>(null);
+  const circleRef = useRef<Matter.Bodies.circle | null>(null);
+  const graphicsRef = useRef<PIXI.Graphics | null>(null);
 
   useEffect(() => {
     const engine = Matter.Engine.create();
