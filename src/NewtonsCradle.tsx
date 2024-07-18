@@ -19,7 +19,7 @@ const NewtonsCradle = () => {
       if (circleRef.current && graphicsRef.current) {
         const { x, y } = circleRef.current.position;
         graphicsRef.current.clear();
-        graphicsRef.current.beginFill(0xFFFFFF);
+        graphicsRef.current.beginFill(0x000000);
         graphicsRef.current.drawCircle(x, y, 25);
         graphicsRef.current.endFill();
       }
@@ -34,7 +34,7 @@ const NewtonsCradle = () => {
   }, []);
 
   return (
-    <Stage width={800} height={600} options={{ backgroundColor: 0x000000 }}>
+    <Stage width={800} height={430} options={{ backgroundColor: 0xF1F1F1 }}>
       <Container>
         <Graphics ref={graphicsRef} />
       </Container>
