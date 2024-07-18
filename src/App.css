@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Peddana&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  display: block;
+  font-family: 'Peddana', sans-serif;
+}
+img {
+  height: 23px;
+  width: 23px;
+}
+
+.header {
+  height: 19vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.title {
+  font-size: 52px;
+  padding-top: 30px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  height: 55vh;
+}
+.canvas-bg {
+  background-color: #F1F1F1;
+  width: 80vw;
+  border-radius: 36px;
+}
+.menu {
+  position: absolute;
+  margin-top: 25px;
+  margin-left: 25px;
+}
+.graph-icon {
+  margin-left: 18px;
+  cursor: pointer;
+}
+.sim-icon {
+  cursor: pointer;
+}
+.simulation {
+  display: flex;
+  justify-content: center;
+}
+
+.user-controls {
+  height: 26vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.input-fields {
+  width: 65vw;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
