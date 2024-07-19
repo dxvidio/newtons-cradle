@@ -40,7 +40,7 @@ function App() {
   };
   const handleLength = (e) => {
     const newLength = e.target.value;
-    if (isNaN(newLength) || newLength < 0 || newLength > 400) {
+    if (isNaN(newLength) || newLength < 100 || newLength > 400) {
       setErrorMessage('String length must be between 100 and 400');
     } else {
       setStringLength(newLength);
