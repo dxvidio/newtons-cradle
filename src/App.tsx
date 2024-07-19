@@ -66,7 +66,7 @@ function App() {
       <div className='content'>
         <div className='canvas-bg'>
           <div className='menu'>
-            <img src={simImg} alt='' className='sim-icon'/>
+            <img src={simImg} alt='' className='sim-icon' onClick={() => window.location.reload()}/>
             <img src={graphImg} alt='' className='graph-icon'/>
           </div>
           <div className='simulation'>
