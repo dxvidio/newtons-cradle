@@ -1,103 +1,106 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Stage, Container, Graphics } from '@pixi/react';
+import React, { useEffect, useRef } from 'react';
 import Matter from 'matter-js';
-import * as PIXI from 'pixi.js';
 
-var Cradle = Cradle || {};
+const NewtonsCradle = ({ mass, elasticity, stringLength, pendulums }) => {
+  const sceneRef = useRef(null);
 
-Cradle.newtonsCradle = function(engine, mass) {
-    var Composite = Matter.Composite,
-        Constraint = Matter.Constraint,
-        Bodies = Matter.Bodies;
+  useEffect(() => {
+    const Engine = Matter.Engine,
+          Render = Matter.Render,
+          Runner = Matter.Runner,
+          Composite = Matter.Composite,
+          MouseConstraint = Matter.MouseConstraint,
+          Mouse = Matter.Mouse;
+    const engine = Engine.create(),
+          world = engine.world;
+    const render = Render.create({
+      element: sceneRef.current,
+      engine: engine,
+      options: {
+        width: 800,
+        height: 430,
+        wireframes: false,
+        background: '#f1f1f1',
+      },
+    });
 
-    var xx = 200,
-        yy = 100,
-        number = 5,
-        size = Math.max(10, mass * 4),
-        stringLength = 200;
+    Render.run(render);
 
-    var newtonsCradle = Composite.create({ label: 'Newtons Cradle' });
+    const runner = Runner.create();
+    Runner.run(runner, engine);
 
-    for (var i = 0; i < number; i++) {
-        var separation = 1.9,
-            circle = Bodies.circle(xx + i * (size * separation), yy + stringLength, size, 
-                { inertia: Infinity, restitution: 1, friction: 0, frictionAir: 0, slop: size * 0.02 }),
-            constraint = Constraint.create({ pointA: { x: xx + i * (size * separation), y: yy }, bodyB: circle });
+    const newtonsCradle = (xx, yy, size, mass, elasticity, stringLength, pendulums) => {
+      const Composite = Matter.Composite,
+            Constraint = Matter.Constraint,
+            Bodies = Matter.Bodies;
+      const newtonsCradle = Composite.create({ label: 'Newtons Cradle' });
 
+      for (let i = 0; i < pendulums; i++) {
+        const separation = 1.9,
+              circle = Bodies.circle(
+                xx + i * (size * separation),
+                yy + stringLength,
+                Math.max(5, mass * 7),
+                { 
+                  inertia: Infinity, 
+                  restitution: elasticity,
+                  friction: 0, 
+                  frictionAir: 0, 
+                  slop: size * 0.02,
+                  render: {
+                    fillStyle: '#000000',
+                  }
+                }
+              ),
+              constraint = Constraint.create({ 
+                pointA: { x: xx + i * (size * separation), y: yy }, bodyB: circle,
+                render: {
+                  strokeStyle: '#000000',
+                  lineWidth: 2,
+                }
+              });
         Composite.addBody(newtonsCradle, circle);
         Composite.addConstraint(newtonsCradle, constraint);
-    }
+      }
 
-    Matter.World.add(engine.world, newtonsCradle);
-    Matter.Body.translate(newtonsCradle.bodies[0], { x: -180, y: -100 });
+      return newtonsCradle;
+    };
 
-    return newtonsCradle;
+    const cradle = newtonsCradle(280, 47, 35, mass, elasticity, stringLength, pendulums);
+    Composite.add(world, cradle);
+
+    // mouse interactivity
+    const mouse = Mouse.create(render.canvas),
+          mouseConstraint = MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+              stiffness: 0.2,
+              render: {
+                visible: false,
+              },
+            },
+          });
+    Composite.add(world, mouseConstraint);
+    render.mouse = mouse;
+    Render.lookAt(render, {
+      min: { x: 0, y: 50 },
+      max: { x: 800, y: 600 },
+    });
+
+    // cleanup
+    return () => {
+      Matter.Render.stop(render);
+      Matter.Runner.stop(runner);
+      Matter.World.clear(world);
+      Matter.Engine.clear(engine);
+      render.canvas.remove();
+      render.canvas = null;
+      render.context = null;
+      render.textures = {};
+    };
+  }, [mass, elasticity, stringLength, pendulums]);
+
+  return <div ref={sceneRef}></div>;
 };
 
-export default function NewtonsCradle({ mass }) {
-    const ref = useRef(null);
-    const graphicsRef = useRef<PIXI.Graphics | null>(null);
-
-    useEffect(() => {
-        const engine = Matter.Engine.create();
-        const runner = Matter.Runner.create();
-
-        // Create the Newton's Cradle
-        Cradle.newtonsCradle(engine, mass);
-
-        const update = () => {
-            Matter.Engine.update(engine);
-            if (graphicsRef.current) {
-                graphicsRef.current.clear();
-                graphicsRef.current.lineStyle(2, 0x000000, 1); // width, color, alpha
-
-                const bodies = Matter.Composite.allBodies(engine.world);
-                bodies.forEach(body => {
-                    const vertices = body.vertices;
-                    graphicsRef.current?.moveTo(vertices[0].x, vertices[0].y);
-                    for (let j = 1; j < vertices.length; j++) {
-                        graphicsRef.current?.lineTo(vertices[j].x, vertices[j].y);
-                    }
-                    graphicsRef.current?.lineTo(vertices[0].x, vertices[0].y);
-
-                    if (body.label === 'Newtons Cradle') {
-                        const partA = body.parts[0];
-                        const partB = body.parts[1];
-                        graphicsRef.current?.moveTo(partA.position.x, partA.position.y);
-                        graphicsRef.current?.lineTo(partB.position.x, partB.position.y);
-                    }
-
-                    if (body.label === 'Circle Body') {
-                        graphicsRef.current?.beginFill(0x000000);
-                        graphicsRef.current?.drawCircle(body.position.x, body.position.y, body.circleRadius);
-                        graphicsRef.current?.endFill();
-
-                        // Draw the strings
-                        const attachmentPointX = body.position.x;
-                        const attachmentPointY = 100;
-                        graphicsRef.current?.moveTo(attachmentPointX, attachmentPointY);
-                        graphicsRef.current?.lineTo(body.position.x, body.position.y);
-                    }
-                });
-            }
-        };
-
-        // Update loop
-        const ticker = new PIXI.Ticker();
-        ticker.add(update);
-        ticker.start();
-
-        return () => {
-            ticker.stop();
-            Matter.Runner.stop(runner);
-        };
-    }, [mass]);
-
-    return (
-        <Stage width={600} height={350} options={{ backgroundColor: 0xF1F1F1 }}>
-            <Container ref={ref}>
-                <Graphics ref={graphicsRef} />
-            </Container>
-        </Stage>
-    );
-};
+export default NewtonsCradle;
