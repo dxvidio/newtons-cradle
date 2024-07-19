@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Stage, Container, Graphics } from '@pixi/react';
 import Matter from 'matter-js';
 import * as PIXI from 'pixi.js';
 
 var Cradle = Cradle || {};
 
-Cradle.newtonsCradle = function(engine) {
+Cradle.newtonsCradle = function(engine, mass) {
     var Composite = Matter.Composite,
         Constraint = Matter.Constraint,
         Bodies = Matter.Bodies;
@@ -13,14 +13,14 @@ Cradle.newtonsCradle = function(engine) {
     var xx = 200,
         yy = 100,
         number = 5,
-        size = 20,
-        length = 200;
+        size = Math.max(10, mass * 4),
+        stringLength = 200;
 
     var newtonsCradle = Composite.create({ label: 'Newtons Cradle' });
 
     for (var i = 0; i < number; i++) {
         var separation = 1.9,
-            circle = Bodies.circle(xx + i * (size * separation), yy + length, size, 
+            circle = Bodies.circle(xx + i * (size * separation), yy + stringLength, size, 
                 { inertia: Infinity, restitution: 1, friction: 0, frictionAir: 0, slop: size * 0.02 }),
             constraint = Constraint.create({ pointA: { x: xx + i * (size * separation), y: yy }, bodyB: circle });
 
@@ -34,23 +34,22 @@ Cradle.newtonsCradle = function(engine) {
     return newtonsCradle;
 };
 
-export default function NewtonsCradle() {
+export default function NewtonsCradle({ mass }) {
     const ref = useRef(null);
     const graphicsRef = useRef<PIXI.Graphics | null>(null);
 
     useEffect(() => {
         const engine = Matter.Engine.create();
         const runner = Matter.Runner.create();
-        Matter.Runner.run(runner, engine);
 
         // Create the Newton's Cradle
-        Cradle.newtonsCradle(engine);
+        Cradle.newtonsCradle(engine, mass);
 
         const update = () => {
             Matter.Engine.update(engine);
             if (graphicsRef.current) {
                 graphicsRef.current.clear();
-                graphicsRef.current.lineStyle(2, 0x000000, 1);
+                graphicsRef.current.lineStyle(2, 0x000000, 1); // width, color, alpha
 
                 const bodies = Matter.Composite.allBodies(engine.world);
                 bodies.forEach(body => {
@@ -92,7 +91,7 @@ export default function NewtonsCradle() {
             ticker.stop();
             Matter.Runner.stop(runner);
         };
-    }, []);
+    }, [mass]);
 
     return (
         <Stage width={600} height={350} options={{ backgroundColor: 0xF1F1F1 }}>
