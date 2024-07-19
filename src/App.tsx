@@ -8,6 +8,9 @@ import { validateMass } from './utils.tsx';
 
 function App() {
   const [mass, setMass] = useState('5');
+  const [elasticity, setElasticity] = useState('1.0');
+  const [stringLength, setStringLength] = useState('350');
+  const [pendulums, setPendulums] = useState('5');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleMassChange = (e) => {
@@ -26,7 +29,33 @@ function App() {
       setErrorMessage(error.message);
     }
   };
-
+  const handleElasticChange = (e) => {
+    const newElastic = e.target.value;
+    if (isNaN(newElastic) || newElastic < 0 || newElastic > 1) {
+      setErrorMessage('Elasticity must be between 0 and 1');
+    } else {
+      setElasticity(newElastic);
+      setErrorMessage('');
+    }
+  };
+  const handleLength = (e) => {
+    const newLength = e.target.value;
+    if (isNaN(newLength) || newLength < 0 || newLength > 400) {
+      setErrorMessage('String length must be between 100 and 400');
+    } else {
+      setStringLength(newLength);
+      setErrorMessage('');
+    }
+  };
+  const handlePendulums = (e) => {
+    const newPendulums = e.target.value;
+    if (isNaN(newPendulums) || newPendulums < 0 || newPendulums > 5) {
+      setErrorMessage('Number must be between 0 and 5');
+    } else {
+      setPendulums(newPendulums);
+      setErrorMessage('');
+    }
+  };
 
   return (
     <div className="App">
@@ -41,7 +70,7 @@ function App() {
             <img src={graphImg} alt='' className='graph-icon'/>
           </div>
           <div className='simulation'>
-            <NewtonsCradle mass={mass}/>
+            <NewtonsCradle mass={mass} elasticity={Number(elasticity)} stringLength={Number(stringLength)} pendulums={Number(pendulums)}/>
           </div>
         </div>
       </div>
@@ -56,9 +85,30 @@ function App() {
             error={errorMessage !== ''}
             helperText={errorMessage}
           />
-          <TextField id="pendulums" label="Pendulums" defaultValue="5"/>
-          <TextField id="string-length" label="String Length (cm)" defaultValue="30"/>
-          <TextField id="elasticity" label="Elasticity" defaultValue="1.00"/>
+          <TextField 
+            id="pendulums" 
+            label="Pendulums" 
+            value={pendulums}
+            onChange={handlePendulums}
+            error={errorMessage !== ''}
+            helperText={errorMessage}
+          />
+          <TextField 
+            id="string-length" 
+            label="String Length (mm)" 
+            value={stringLength}
+            onChange={handleLength}
+            error={errorMessage !== ''}
+            helperText={errorMessage}
+          />
+          <TextField 
+            id="elasticity" 
+            label="Elasticity" 
+            value={elasticity}
+            onChange={handleElasticChange}
+            error={errorMessage !== ''}
+            helperText={errorMessage}
+          />
         </div>
       </div>
     </div>
