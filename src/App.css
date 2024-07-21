@@ -28,7 +28,7 @@ img {
 .content {
   display: flex;
   justify-content: center;
-  height: 55vh;
+  height: 430px;
 }
 .canvas-bg {
   background-color: #F1F1F1;

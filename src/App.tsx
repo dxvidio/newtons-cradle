@@ -1,61 +1,30 @@
 import React, { useState } from 'react';
-import NewtonsCradle from './NewtonsCradle.tsx';
+import NewtonsCradle from './components/NewtonsCradle.tsx';
+import Graph from './components/Graph.tsx';
+import { createInputHandler, validationRules } from './utils.tsx';
 import simImg from './media/sim.png';
 import graphImg from './media/graph.png';
 import { TextField } from '@mui/material';
 import './App.css';
-import { validateMass } from './utils.tsx';
 
 function App() {
+  const [showSimulation, setShowSimulation] = useState(true);
+  const [showGraph, setShowGraph] = useState(false);
+
+  const toggleGraph = () => setShowGraph(!showGraph);
+
+  const toggleSimulation = () => setShowSimulation(!showSimulation);
+
   const [mass, setMass] = useState('5');
   const [elasticity, setElasticity] = useState('1.0');
   const [stringLength, setStringLength] = useState('350');
   const [pendulums, setPendulums] = useState('5');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleMassChange = (e) => {
-    const newMass = e.target.value;
-    try {
-      if (newMass === '') {
-        setErrorMessage('');
-        setMass('');
-        return;
-      }
-      validateMass(Number(newMass));
-      setMass(newMass);
-      setErrorMessage('');
-    } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
-    }
-  };
-  const handleElasticChange = (e) => {
-    const newElastic = e.target.value;
-    if (isNaN(newElastic) || newElastic < 0 || newElastic > 1) {
-      setErrorMessage('Elasticity must be between 0 and 1');
-    } else {
-      setElasticity(newElastic);
-      setErrorMessage('');
-    }
-  };
-  const handleLength = (e) => {
-    const newLength = e.target.value;
-    if (isNaN(newLength) || newLength < 0 || newLength > 400) {
-      setErrorMessage('String length must be between 0 and 400');
-    } else {
-      setStringLength(newLength);
-      setErrorMessage('');
-    }
-  };
-  const handlePendulums = (e) => {
-    const newPendulums = e.target.value;
-    if (isNaN(newPendulums) || newPendulums < 0 || newPendulums > 5) {
-      setErrorMessage('Number must be between 0 and 5');
-    } else {
-      setPendulums(newPendulums);
-      setErrorMessage('');
-    }
-  };
+  const handleMassChange = createInputHandler(setMass, setErrorMessage, validationRules.mass);
+  const handleElasticChange = createInputHandler(setElasticity, setErrorMessage, validationRules.elasticity);
+  const handleLength = createInputHandler(setStringLength, setErrorMessage, validationRules.stringLength);
+  const handlePendulums = createInputHandler(setPendulums, setErrorMessage, validationRules.pendulums);
 
   return (
     <div className="App">
@@ -66,12 +35,15 @@ function App() {
       <div className='content'>
         <div className='canvas-bg'>
           <div className='menu'>
-            <img src={simImg} alt='' className='sim-icon' onClick={() => window.location.reload()}/>
-            <img src={graphImg} alt='' className='graph-icon'/>
+            <img src={simImg} alt='' className='sim-icon' onClick={() => { setShowGraph(false); setShowSimulation(true); }}/>
+            <img src={graphImg} alt='' className='graph-icon' onClick={() => { setShowGraph(true); setShowSimulation(false); }}/>
+            {showGraph && <Graph />}
           </div>
-          <div className='simulation'>
-            <NewtonsCradle mass={mass} elasticity={Number(elasticity)} stringLength={Number(stringLength)} pendulums={Number(pendulums)}/>
-          </div>
+          {showSimulation && (
+            <div className='simulation'>
+              <NewtonsCradle mass={mass} elasticity={Number(elasticity)} stringLength={Number(stringLength)} pendulums={Number(pendulums)}/>
+            </div>
+          )}
         </div>
       </div>
 
