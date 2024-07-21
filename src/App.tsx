@@ -11,10 +11,6 @@ function App() {
   const [showSimulation, setShowSimulation] = useState(true);
   const [showGraph, setShowGraph] = useState(false);
 
-  const toggleGraph = () => setShowGraph(!showGraph);
-
-  const toggleSimulation = () => setShowSimulation(!showSimulation);
-
   const [mass, setMass] = useState('5');
   const [elasticity, setElasticity] = useState('1.0');
   const [stringLength, setStringLength] = useState('350');

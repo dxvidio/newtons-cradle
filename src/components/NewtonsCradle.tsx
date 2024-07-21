@@ -17,7 +17,7 @@ const NewtonsCradle = ({ mass, elasticity, stringLength, pendulums }) => {
       element: sceneRef.current,
       engine: engine,
       options: {
-        width: 800,
+        width: 1000,
         height: 430,
         wireframes: false,
         background: '#f1f1f1',
