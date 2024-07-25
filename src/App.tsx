@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NewtonsCradle from './components/NewtonsCradle.tsx';
 import Graph from './components/Graph.tsx';
 import { createInputHandler, validationRules } from './utils.tsx';
@@ -22,6 +22,13 @@ function App() {
   const handleLength = createInputHandler(setStringLength, setErrorMessage, validationRules.stringLength);
   const handlePendulums = createInputHandler(setPendulums, setErrorMessage, validationRules.pendulums);
 
+  const [period, setPeriod] = useState(0);
+
+  useEffect(() => {
+    const T = 2 / Math.PI * Math.sqrt(Number(stringLength) / 9.81);
+    setPeriod(T);
+  }, [stringLength]);
+
   return (
     <div className="App">
       <div className='header'>
@@ -33,7 +40,7 @@ function App() {
           <div className='menu'>
             <img src={simImg} alt='' className='sim-icon' onClick={() => { setShowGraph(false); setShowSimulation(true); }}/>
             <img src={graphImg} alt='' className='graph-icon' onClick={() => { setShowGraph(true); setShowSimulation(false); }}/>
-            {showGraph && <Graph />}
+            {showGraph && <Graph period={period} />}
           </div>
           {showSimulation && (
             <div className='simulation'>

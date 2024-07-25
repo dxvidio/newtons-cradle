@@ -1,26 +1,31 @@
 import React from 'react';
 
-const Graph = () => {
+const Graph = ({ period }) => {
+  const frequency = 1 / period;
+  
   return (
     <div className='grid'>
       <div className='item'>
-        <h3>
-          Newton's Cradle is a fascinating device that demonstrates the conservation of momentum and energy through a series of swinging spheres. 
-          The lab allows users to adjust parameters such as the mass of the spheres, the elasticity of the collisions, the length of the strings, and the number of pendulums.
-        </h3>
+        <h1 className='description'>
+          "For Every Action, There is an Equal and Opposite Reaction."
+        </h1>
       </div>
       <div className='item'>
-        <h3>Isaac Newtons's third law of motion states that for every action, there is an equal and opposite reaction</h3>
+        <p className='sub-description'>
+          Newton's Cradle is a device that demonstrates the conservation of momentum and energy. When one ball on the end is lifted and released, it strikes the stationary balls, setting the last ball into motion. The last ball then swings back and strikes the stationary balls, setting the first ball into motion. This process continues indefinitely.
+        </p>
       </div>
       <div className='item'>
-        <h3>Period of Each Pendulum:</h3>
-        <p className='value'>9.8</p>
-        {/* <p>T=2/pi/sqrt(length of string / 9.81)</p> */}
+        <button onClick={() => alert("Formula: period = 2π√(length/gravity). This formula calculates the period of a pendulum which is the time for one complete cycle, a left swing and a right swing.")} className='value'>
+          {period.toFixed(2)}s
+        </button>
+        <p className='sub-description'>Period of Each Pendulum</p>
       </div>
       <div className='item'>
-        <h3>Frequency of Occilations:</h3>
-        <p className='value'>9.8</p>
-        {/* <p>f=1/T</p> */}
+        <button onClick={() => alert("Formula: frequency = 1/period. This formula calculates the frequency of a pendulum which is the number of occilations per second.")} className='value'>
+          {frequency.toFixed(2)}Hz
+        </button>
+        <p className='sub-description'>Occilation Frequency</p>
       </div>
     </div>
   );
